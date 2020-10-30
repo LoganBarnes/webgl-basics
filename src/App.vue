@@ -16,11 +16,12 @@ import shaderFrag from "ts-shader-loader!@/assets/shaders/shader.frag";
 })
 export default class App extends Vue {
   private viewport: vec2 = vec2.create();
+  private glProgram: WebGLProgram | null = null;
 
   public mounted(): void {
     window.addEventListener("resize", this.handleResize);
+    this.buildGLPipeline();
     this.handleResize();
-    this.buildAndRenderGLPipeline();
   }
 
   public beforeDestroy(): void {
@@ -29,9 +30,10 @@ export default class App extends Vue {
 
   public handleResize(): void {
     this.viewport = (this.$refs.canvas as GLCanvas).resize();
+    this.renderGLPipeline();
   }
 
-  private buildAndRenderGLPipeline(): void {
+  private buildGLPipeline(): void {
     const gl: WebGLRenderingContext = (this.$refs.canvas as GLCanvas).glContext;
 
     gl.clearColor(0.2, 0.2, 0.2, 1.0);
@@ -93,17 +95,22 @@ export default class App extends Vue {
         "Failed to link program: " + gl.getProgramInfoLog(program)
       );
     }
+    this.glProgram = program;
 
     // Shaders no longer need to remain attached
     gl.detachShader(program, glVertexShader);
     gl.detachShader(program, glFragmentShader);
+  }
+
+  private renderGLPipeline(): void {
+    const gl: WebGLRenderingContext = (this.$refs.canvas as GLCanvas).glContext;
 
     /* tslint:disable:no-bitwise */
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     /* tslint:enable:no-bitwise */
     gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
 
-    gl.useProgram(program);
+    gl.useProgram(this.glProgram);
     gl.drawArrays(gl.POINTS, 0, 1);
 
     gl.useProgram(null);

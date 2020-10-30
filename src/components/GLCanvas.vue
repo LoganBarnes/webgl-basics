@@ -16,7 +16,9 @@ export default class GLCanvas extends Vue {
    */
   public mounted(): void {
     const canvas: HTMLCanvasElement = this.$el as HTMLCanvasElement;
-    const options: WebGLContextAttributes = { preserveDrawingBuffer: true };
+    const options: WebGLContextAttributes = {
+      antialias: false
+    };
     const gl = canvas.getContext("webgl", options);
 
     if (!gl) {
@@ -37,8 +39,6 @@ export default class GLCanvas extends Vue {
     const canvas: HTMLCanvasElement = this.$el as HTMLCanvasElement;
     canvas.width = canvas.clientWidth;
     canvas.height = canvas.clientHeight;
-
-    console.log("resize");
 
     return vec2.fromValues(canvas.width, canvas.height);
   }
