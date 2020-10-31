@@ -73,7 +73,17 @@ export default class App extends Vue {
       throw new Error("Failed to create WebGL buffer");
     }
 
-    const positions = new Float32Array([-1, -1, 0, 1, -1, 0, 0, 1, 0]);
+    const positions = new Float32Array([
+      -0.5,
+      -0.5,
+      0,
+      0.5,
+      -0.5,
+      0,
+      0,
+      0.5,
+      0
+    ]);
 
     // Bind the buffer and copy the contents of `positions` into it.
     gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
